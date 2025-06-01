@@ -13,7 +13,7 @@ router.post('/login', login);
 router.post('/logout', authenticate, logout);
 
 // Google Drive OAuth routes
-router.get('/google', authenticate, googleAuth);
+router.get('/google', googleAuth);
 router.get('/google/callback', googleCallback);
 
 // Dropbox OAuth routes

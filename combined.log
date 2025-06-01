@@ -1,0 +1,24 @@
+{"level":"error","message":"MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":null,"stale":false,"type":"Unknown"},"stack":"MongooseServerSelectionError: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017\n    at _handleConnectionErrors (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\node_modules\\mongoose\\lib\\connection.js:816:11)\n    at NativeConnection.openUri (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\node_modules\\mongoose\\lib\\connection.js:791:11)\n    at async connectDB (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\src\\config\\database.ts:7:5)\n    at async startServer (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\src\\server.ts:41:5)","timestamp":"2025-06-01T05:57:56.402Z"}
+{"level":"error","message":"MongoDB connection error: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":null,"stale":false,"type":"Unknown"},"stack":"MongooseServerSelectionError: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017\n    at _handleConnectionErrors (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\node_modules\\mongoose\\lib\\connection.js:816:11)\n    at NativeConnection.openUri (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\node_modules\\mongoose\\lib\\connection.js:791:11)\n    at async connectDB (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\src\\config\\database.ts:7:5)\n    at async startServer (C:\\Users\\ADITYA SINGH\\OneDrive\\Documents\\GitHub\\Alldoc\\src\\server.ts:41:5)","timestamp":"2025-06-01T05:57:56.402Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:07:35.290Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:07:35.319Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:07:35.322Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:17:01.496Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:17:01.507Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:17:12.479Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:17:12.485Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:21:55.620Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:21:55.627Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:22:07.185Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:22:07.191Z"}
+{"level":"error","message":"Operational Error: No authentication token, access denied","timestamp":"2025-06-01T06:22:20.899Z"}
+{"level":"error","message":"Operational Error: No authentication token, access denied","timestamp":"2025-06-01T06:22:20.902Z"}
+{"level":"error","message":"Operational Error: No authentication token, access denied","timestamp":"2025-06-01T06:25:06.595Z"}
+{"level":"error","message":"Operational Error: No authentication token, access denied","timestamp":"2025-06-01T06:29:47.470Z"}
+{"level":"error","message":"Operational Error: No authentication token, access denied","timestamp":"2025-06-01T06:29:50.876Z"}
+{"level":"error","message":"Operational Error: No authentication token, access denied","timestamp":"2025-06-01T06:29:50.879Z"}
+{"level":"error","message":"Operational Error: No authentication token, access denied","timestamp":"2025-06-01T06:29:53.781Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:31:37.539Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:31:37.552Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:32:19.344Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:32:19.355Z"}

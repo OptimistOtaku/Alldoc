@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Storage Aggregator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .storage-card {
+            margin-bottom: 20px;
+        }
+        .progress {
+            height: 20px;
+        }
+        .alert {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Cloud Storage Aggregator</a>
+            <div class="navbar-nav ms-auto">
+                <button class="btn btn-outline-light me-2" onclick="connectGoogle()">Connect Google Drive</button>
+                <button class="btn btn-outline-light me-2" onclick="connectDropbox()">Connect Dropbox</button>
+                <button class="btn btn-outline-light" onclick="connectOneDrive()">Connect OneDrive</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Alert container for messages -->
+        <div id="alertContainer"></div>
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Storage Overview</h5>
+                    </div>
+                    <div class="card-body" id="storageStats">
+                        <!-- Storage stats will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Files</h5>
+                        <div>
+                            <input type="file" id="fileInput" style="display: none" onchange="uploadFile(event)">
+                            <button class="btn btn-primary me-2" onclick="document.getElementById('fileInput').click()">Upload File</button>
+                            <input type="text" class="form-control d-inline-block" style="width: 200px" placeholder="Search files..." onkeyup="searchFiles(this.value)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Size</th>
+                                        <th>Provider</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fileList">
+                                    <!-- Files will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check for URL parameters on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            const error = urlParams.get('error');
+
+            if (message) {
+                showAlert(message, 'success');
+            }
+            if (error) {
+                showAlert(error, 'danger');
+            }
+
+            // Clear URL parameters
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            loadFiles();
+            loadStorageStats();
+        });
+
+        // Show alert message
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            alertContainer.appendChild(alert);
+
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Load files from all connected services
+        async function loadFiles() {
+            try {
+                const response = await fetch('/api/storage/files');
+                if (!response.ok) {
+                    throw new Error('Failed to load files');
+                }
+                const files = await response.json();
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = files.map(file => `
+                    <tr>
+                        <td>${file.name}</td>
+                        <td>${formatFileSize(file.size)}</td>
+                        <td>${file.provider}</td>
+                        <td>${new Date(file.createdTime).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary me-1" onclick="downloadFile('${file.provider}', '${file.id}')">Download</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteFile('${file.provider}', '${file.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading files:', error);
+                showAlert('Failed to load files. Please try again.', 'danger');
+            }
+        }
+
+        // Load storage statistics
+        async function loadStorageStats() {
+            try {
+                const response = await fetch('/api/storage/stats');
+                if (!response.ok) {
+                    throw new Error('Failed to load storage stats');
+                }
+                const { stats } = await response.json();
+                const statsContainer = document.getElementById('storageStats');
+                statsContainer.innerHTML = stats.map(stat => `
+                    <div class="storage-card">
+                        <h6>${stat.provider}</h6>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: ${stat.percentage}%">
+                                ${Math.round(stat.percentage)}%
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            ${formatFileSize(stat.used)} of ${formatFileSize(stat.limit)} used
+                        </small>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading storage stats:', error);
+                showAlert('Failed to load storage statistics. Please try again.', 'danger');
+            }
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Connect to cloud services
+        function connectGoogle() {
+            window.location.href = '/api/auth/google';
+        }
+
+        function connectDropbox() {
+            window.location.href = '/api/auth/dropbox';
+        }
+
+        function connectOneDrive() {
+            window.location.href = '/api/auth/onedrive';
+        }
+
+        // Upload file
+        async function uploadFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/storage/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to upload file');
+                }
+                showAlert('File uploaded successfully', 'success');
+                loadFiles();
+                loadStorageStats();
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                showAlert('Failed to upload file. Please try again.', 'danger');
+            }
+        }
+
+        // Download file
+        async function downloadFile(provider, fileId) {
+            try {
+                const response = await fetch(`/api/storage/download/${provider}/${fileId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to download file');
+                }
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = ''; // The server will set the filename
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            } catch (error) {
+                console.error('Error downloading file:', error);
+                showAlert('Failed to download file. Please try again.', 'danger');
+            }
+        }
+
+        // Delete file
+        async function deleteFile(provider, fileId) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+
+            try {
+                const response = await fetch(`/api/storage/delete/${provider}/${fileId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to delete file');
+                }
+                showAlert('File deleted successfully', 'success');
+                loadFiles();
+                loadStorageStats();
+            } catch (error) {
+                console.error('Error deleting file:', error);
+                showAlert('Failed to delete file. Please try again.', 'danger');
+            }
+        }
+
+        // Search files
+        async function searchFiles(query) {
+            if (!query) {
+                loadFiles();
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/storage/search?query=${encodeURIComponent(query)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to search files');
+                }
+                const files = await response.json();
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = files.map(file => `
+                    <tr>
+                        <td>${file.name}</td>
+                        <td>${formatFileSize(file.size)}</td>
+                        <td>${file.provider}</td>
+                        <td>${new Date(file.createdTime).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary me-1" onclick="downloadFile('${file.provider}', '${file.id}')">Download</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteFile('${file.provider}', '${file.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error searching files:', error);
+                showAlert('Failed to search files. Please try again.', 'danger');
+            }
+        }
+    </script>
+</body>
+</html> 
