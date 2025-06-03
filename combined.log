@@ -22,3 +22,5 @@
 {"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:31:37.552Z"}
 {"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T06:32:19.344Z"}
 {"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T06:32:19.355Z"}
+{"level":"info","message":"MongoDB connected successfully","timestamp":"2025-06-01T11:34:42.192Z"}
+{"level":"info","message":"Server running on port 3000","timestamp":"2025-06-01T11:34:42.212Z"}
